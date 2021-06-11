@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "reservation")
@@ -21,13 +24,17 @@ public class Reservation implements Serializable {
     @Column(name="id_reservation", length = 11)
     private Long id;
 
-    @Column(name="name_person", length = 100)
+    @NotEmpty(message = "Name is required")
+    @Column(name="name_person", length = 100, unique = true)
     private String namePerson;
 
-    @Column(name="email_person", length = 100)
+    @NotEmpty(message = "Email is required")
+    @Email(message = "Email format is wrong")
+    @Column(name="email_person", length = 100, unique = true)
     private String email;
 
-    @Column(name="phone_person", length = 50)
+    @NotEmpty(message = "Phone Number is required")
+    @Column(name="phone_person", length = 50, unique = true)
     private String phoneNumber;
 
     @Column(name="address_person", length = 255)
@@ -35,6 +42,10 @@ public class Reservation implements Serializable {
 
     @Column(name="is_deleted", length = 11, columnDefinition = "integer default 0")
     private Integer isDeleted;
+
+    public Reservation(){
+        
+    }
 
     public Reservation(Long id, String namePerson, String email, String phoneNumber, String address,
             Integer isDeleted) {
