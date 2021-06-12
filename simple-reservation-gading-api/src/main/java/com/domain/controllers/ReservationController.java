@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +30,9 @@ public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
+    @CrossOrigin
     @PostMapping
-    public ResponseEntity<ResponseData<Reservation>> create(@Valid @RequestBody Reservation reservation, Errors errors) {
+    public ResponseEntity<ResponseData<Reservation>> create(@Valid Reservation reservation, Errors errors) {
         ResponseData<Reservation> responseData = new ResponseData<>();
 
         if (errors.hasErrors()) {
@@ -47,8 +49,9 @@ public class ReservationController {
 
     }
 
+    @CrossOrigin
     @PutMapping
-    public ResponseEntity<ResponseData<Reservation>> update(@Valid @RequestBody Reservation reservation, Errors errors) {
+    public ResponseEntity<ResponseData<Reservation>> update(@Valid Reservation reservation, Errors errors) {
         ResponseData<Reservation> responseData = new ResponseData<>();
 
         if (errors.hasErrors()) {
@@ -65,16 +68,19 @@ public class ReservationController {
 
     }
 
+    @CrossOrigin
     @GetMapping
     public List<Reservation>getAllData(){
         return reservationService.getAllData();
     }
 
+    @CrossOrigin
     @DeleteMapping("/{id}")
     public void softDelete(@PathVariable("id") Long id){
         reservationService.sofDelete(id);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
     public Reservation getDataById(@PathVariable("id") Long id){
         return reservationService.findDataById(id);
