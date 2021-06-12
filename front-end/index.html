@@ -1,12 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Reservation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
+
 <body>
-    
+
+    <div class="container-fluid">
+        <div class="row" style="padding: 20px 0px;">
+            <div class="col-xs-12">
+                <h1 style="text-align: center;">Simple CRUD With Java Spring</h1>
+            </div>
+            <div class="col-xs-12" style="text-align: right;">
+                <button type="button" style="width: 15%;" class="btn btn-primary" data-toggle="modal" onclick="openModalAdd()">Add
+                    Data</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <table class="table table-warning table-barang">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                Person Name
+                            </th>
+                            <th scope="col">
+                                Email
+                            </th>
+                            <th scope="col">
+                                Phone Number
+                            </th>
+                            <th scope="col">
+                                Address
+                            </th>
+                            <th scope="col">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ModalAdd" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Data</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" id="form-add-reservation">
+                            <div class="form-group">
+                                <label for="inputNamePerson">Person Name</label>
+                                <input type="text" class="form-control" id="inputNamePerson" name="inputNamePerson">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmailPerson">Email</label>
+                                <input type="email" class="form-control" id="inputEmailPerson" name="inputEmailPerson">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputNumberPerson">Phone Number</label>
+                                <input type="text" class="form-control" id="inputNumberPerson" name="inputNumberPerson">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputAddressPerson">Address</label>
+                                <textarea class="form-control" id="inputAddressPerson" name="inputAddressPerson"
+                                    rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="addDataReservation()">Save
+                            changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            onclick="closeModalAdd()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="ModalEdit" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Data</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" id="form-edit-reservation">
+                            <input id="idReservationEdit" type="hidden">
+                            <div class="form-group">
+                                <label for="inputNamePersonEdit">Person Name</label>
+                                <input type="text" class="form-control" id="inputNamePersonEdit"
+                                    name="inputNamePersonEdit">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmailPersonEdit">Email</label>
+                                <input type="email" class="form-control" id="inputEmailPersonEdit"
+                                    name="inputEmailPersonEdit">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputNumberPersonEdit">Phone Number</label>
+                                <input type="text" class="form-control" id="inputNumberPersonEdit"
+                                    name="inputNumberPersonEdit">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputAddressPersonEdit">Address</label>
+                                <textarea class="form-control" id="inputAddressPersonEdit" name="inputAddressPersonEdit"
+                                    rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="saveDataReservation()">Save
+                            changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            onclick="closeModalEdit()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(
+            getDataBarang()
+        )
+
+        function openModalAdd() {
+            $("#ModalAdd").modal("show");
+        }
+
+        function openModalEdit(id) {
+            $.ajax({
+                url: `http://localhost:8080/api/reservation/${id}`,
+                type: "GET",
+                dataType: 'json',
+                success: function (data) {
+                    $("#ModalEdit").modal("show");
+                    $("#inputNamePersonEdit").val(data.namePerson)
+                    $("#inputEmailPersonEdit").val(data.email)
+                    $("#inputNumberPersonEdit").val(data.phoneNumber)
+                    $("#inputAddressPersonEdit").val(data.address)
+                    $("#idReservationEdit").val(data.id)
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    /*console.log(XMLHttpRequest);
+                    console.log(textStatus);
+                    console.log(errorThrown);*/
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: "There is something Error"
+                    })
+                }
+            })
+        }
+
+
+        function closeModalAdd() {
+            $("#ModalAdd").modal("hide");
+            $(':input', '#form-add-reservation')
+                .not(':button, :submit, :reset, :hidden')
+                .val('')
+                .prop('checked', false)
+                .prop('selected', false);
+        }
+
+        function closeModalEdit(){
+            $("#ModalEdit").modal("hide");
+        }
+
+        function getDataBarang() {
+            $.ajax({
+                url: "http://localhost:8080/api/reservation",
+                type: "GET",
+                dataType: 'json',
+                success: function (data) {
+                    $(data).each((index, item) => {
+                        $('.table-barang tbody').append(
+                            `
+                                <tr id="row-${item.id}">
+                                    <td>${item.namePerson}</td>
+                                    <td>${item.email}</td>
+                                    <td>${item.phoneNumber}</td>
+                                    <td>${item.address}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete(${item.id})">Delete</button>
+                                        <button type="button" class="btn btn-warning" onclick="openModalEdit(${item.id})">Edit</button>
+                                    </td>
+                                </tr>
+                            `
+                        )
+                    })
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    /*console.log(XMLHttpRequest);
+                    console.log(textStatus);
+                    console.log(errorThrown);*/
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: "Data can't be load"
+                    })
+                }
+            })
+        }
+
+        function confirmDelete(person_id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You Want Delete This Item ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then(function (result) {
+                if (result.value) {
+                    handleDelete(person_id)
+                }
+            })
+        }
+
+        function handleDelete(id) {
+            $.ajax({
+                url: `http://localhost:8080/api/reservation/${id}`,
+                type: "DELETE",
+                success: function (res) {
+                    $(`#row-${id}`).remove();
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Delete Data Success'
+                    })
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    /*console.log(XMLHttpRequest);
+                    console.log(textStatus);
+                    console.log(errorThrown);*/
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: "There is something Error"
+                    })
+                }
+            })
+        }
+
+
+        function addDataReservation() {
+
+            let namePerson = $("#inputNamePerson").val()
+            let email = $("#inputEmailPerson").val()
+            let phoneNumber = $("#inputNumberPerson").val()
+            let address = $("#inputAddressPerson").val()
+
+            $.ajax({
+                url: "http://localhost:8080/api/reservation",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    namePerson: namePerson,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    address: address
+                },
+                success: function (data) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Adding Data Success'
+                    })
+
+                    $('.table-barang tbody').empty()
+                    $("#ModalAdd").modal("hide");
+                    getDataBarang()
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    /*console.log(XMLHttpRequest);
+                    console.log(textStatus);
+                    console.log(errorThrown);*/
+                    let errorMessage = ""
+                    for (let x of XMLHttpRequest.responseJSON.messages) {
+                        errorMessage += `<li>${x}</li>`
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: `<ul style="list-style-type:none;">${errorMessage}</ul>`
+                    })
+
+                }
+            })
+        }
+
+        function saveDataReservation() {
+
+            let id = $("#idReservationEdit").val()
+            let namePerson = $("#inputNamePersonEdit").val()
+            let email = $("#inputEmailPersonEdit").val()
+            let phoneNumber = $("#inputNumberPersonEdit").val()
+            let address = $("#inputAddressPersonEdit").val()
+
+            $.ajax({
+                url: `http://localhost:8080/api/reservation`,
+                type: "PUT",
+                dataType: 'json',
+                data: {
+                    id: id,
+                    namePerson: namePerson,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    address: address
+                },
+                success: function (data) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Edit Data Success'
+                    })
+
+                    $('.table-barang tbody').empty()
+                    $("#ModalEdit").modal("hide");
+                    getDataBarang()
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    /*console.log(XMLHttpRequest);
+                    console.log(textStatus);
+                    console.log(errorThrown);*/
+                    let errorMessage = ""
+                    for (let x of XMLHttpRequest.responseJSON.messages) {
+                        errorMessage += `<li>${x}</li>`
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        html: `<ul style="list-style-type:none;">${errorMessage}</ul>`
+                    })
+
+                }
+            })
+        }
+
+
+
+
+    </script>
+
+
+
 </body>
+
 </html>
